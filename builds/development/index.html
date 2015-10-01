@@ -5,19 +5,19 @@
     <title>day #</title>
     <link rel="stylesheet" href="css/myStyle.css">
     <link rel="stylesheet" href="css/anotherstyle.css">
-    <style>
+    <style type="text/css">
         .studentRec {
             border: 1px solid #777;
-            margin: 4px;
-            padding: 4px;
-            font-size: 14px;
-            background: #cccccc;
+            margin: 4pt;
+            padding: 4pt;
+            font-size: 14pt;
+            background-color: #ccc;
         }
         .passingStudent {
-            background: lightgreen;
+            background-color: lightGreen;
         }
         .failingStudent {
-            background: pink;
+            background-color: pink;
         }
     </style>
 </head>
@@ -27,21 +27,44 @@
 <script src="js/lib/underscore.js"></script>
 <script src="SampleData.js"></script>
 <script>
-function appendTemplateData(dataString) {
-    var container = document.getElementById("container");
-    container.innerHTML = container.innerHTML + dataString;
-}
-var templateString = "<div><h1>Name: <%= lastname %></h1></div>";
-var templateString2 = "<div><h1>Name: <% print(lastname.toUpperCase()) %></h1></div>";
+    function appendTemplateData(dataString) {
+        var container = document.getElementById("container");
+        container.innerHTML = container.innerHTML + dataString;
+    }
+    var templateString = "<div><span>Name: <%= lastname %></span></div>";
+    var templateString2 = "<div><span>Name: <% print(lastname.toUpperCase()) %></span></div>";
 
-window.addEventListener("load", function (e) {
-//    var compiledTemplate = _.template(templateString);
-    var compiledTemplate = _.template(templateString2);
-    var result = compiledTemplate({
-        lastname: "Hossenfeffer"
-    });
-    appendTemplateData(result);
-});
+    var studentInfo1 = "<% _.each(students, function(item) { %>" +
+            "<div class='studentRec " +
+            "<% (item.midterm_score + item.final_score) / 2 > 65 ? print('passingStudent') : print('failingStudent') %>'>" +
+            "<span style='font-weight:bold'>Name:</span> <span><%= item.lastname %>, <%= item.firstname %> </span>" +
+            "<span style='font-weight:bold'>School:</span> <span><%= item.school %></span></div>" +
+            "<% }); %>";
+
+    var studentInfo2 = "<% var grouped = _.groupBy(students, function(item) {return item.school;}); " +
+        "for (i in grouped) { _.each(grouped[i], function(item) { %>" +
+        "<div class='studentRec " +
+        "<% (item.midterm_score + item.final_score) / 2 > 65 ? print('passingStudent') : print('failingStudent') %>'>" +
+        "<span style='font-weight:bold'>Name:</span> <span><%= item.lastname %>, <%= item.firstname %> </span>" +
+        "<span style='font-weight:bold'>School:</span> <span><%= item.school %></span></div>" +
+        "<% })}; %>";
+
+    window.addEventListener("load", function(e) {
+        // // compile the template string
+//         var compiledTemplate = _.template(templateString);
+//         var compiledTemplate = _.template(templateString2);
+
+         // now we can call the template with different data
+//         var result = compiledTemplate({
+//           lastname: "hhh"
+//         });
+
+        // to perform a one-off template operation, just pass in the data object
+        // as the second parameter to the template
+        var result = _.template(studentInfo1, students);
+
+        appendTemplateData(result);
+    })
 </script>
 </body>
 </html>
